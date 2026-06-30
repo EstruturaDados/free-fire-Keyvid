@@ -26,6 +26,7 @@ int main() {
         printf("(1) Adicionar Item\n");
         printf("(2) Remover Item\n");
         printf("(3) Listar Item\n");
+        printf("(4) Buscar Item\n");
         printf("(0) Sair\n");
         printf("Escolha uma opção:");
         scanf("%d", &opcao);
@@ -96,9 +97,53 @@ int main() {
             if(total_itens == 0) {
                 printf("A mochila está vazia!");
             } else {
+                printf("%-5s | %-20s | %-15s | %s\n", "ID", "NOME", "TIPO", "QUANTIDADE");
+                printf("=============================================================\n");
                 for (int i = 0; i < total_itens; i++) {
-                    printf("[%d] Nome: %s | Tipo: %s | Quantidade: %d", i, inventario[i].nome, inventario[i].tipo, inventario[i].quantidade);
+                    printf("[%d]  | %-20s | %-15s | %d\n", 
+                        i,
+                        inventario[i].nome,
+                        inventario[i].tipo,
+                        inventario[i].quantidade);
 
+                }
+                printf("=============================================================\n");
+                printf("Total de itens: %d/10\n", total_itens);
+            }
+            break;
+
+         // 4. Ordenar os itens por critério (nome, tipo, prioridade)
+        case 4:
+            printf("\n=== BUSCAR ITEM ===\n");
+            if (total_itens == 0) {
+                printf("A mochila está vazia! Nâo há itens disponíveis.\n");
+            } else {
+                char nome_busca[30];
+                printf("Digite o nome do item que procura: ");
+                scanf(" %[^\n]", nome_busca);
+
+                int encontrado = 0;
+
+                for (int i = 0; i < total_itens; i++) {
+                    if (strcmp(inventario[i].nome, nome_busca) == 0) {
+                        printf("\n -> ITEM ENCONTRADO:\n");
+
+                        printf("%-5s | %-20s | %-15s | %s\n", "ID", "NOME", "TIPO", "QUANTIDADE");
+                        printf("==================================================================\n");
+                        printf("[%d]  | %-20s | %-15s | %d\n", 
+                        i,
+                        inventario[i].nome,
+                        inventario[i].tipo,
+                        inventario[i].quantidade);
+
+                    encontrado = 1;
+                    break; 
+
+                    }
+                }
+
+                if (encontrado == 0 ) {
+                    printf("\n-> Erro: O item '%s' não está na mochila.\n", nome_busca);
                 }
             }
             break;
@@ -111,17 +156,6 @@ int main() {
             printf("\nOpcao invalida! Tente novamente.\n");
         }
     } while (opcao != 0);
-
-    
-    
-    
-    
-    // 4. Ordenar os itens por critério (nome, tipo, prioridade)
-    // 5. Realizar busca binária por nome
-    // 0. Sair
-
-    
-    // A ordenação e busca binária exigem que os dados estejam bem organizados.
 
     return 0;
 }
