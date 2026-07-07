@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 // Código da Ilha – Edição Free Fire
 // Nível: Aventureiro
@@ -12,6 +13,7 @@ struct Item {
     char nome [30];
     char tipo [20];
     int quantidade;
+    int prioridade;
 
 };
 
@@ -19,41 +21,56 @@ int main() {
     struct Item inventario[10];
     int opcao;
     int total_itens = 0;
+    int ordenado_por_nome = 0;
 
     // Menu principal com opções:
     do{
-        printf("=== MOCHILA FREE FIRE ===\n");
-        printf("(1) Adicionar Item\n");
-        printf("(2) Remover Item\n");
-        printf("(3) Listar Item\n");
-        printf("(4) Buscar Item\n");
-        printf("(0) Sair\n");
-        printf("Escolha uma opção:");
+        printf("\n==============================================================\n");
+        printf("   PLANO DE FUGA - CODIGO DA ILHA (NIVEL MESTRE)\n");
+        printf("==============================================================\n");
+        printf("Itens na Mochila: %d/10\n", total_itens);
+        
+        printf("Status da Ordenacao por Nome: %s\n\n", ordenado_por_nome == 1 ? "ORDENADO" : "NAO ORDENADO");
+        
+        printf("1. Adicionar Componente\n");
+        printf("2. Descartar Componente\n");
+        printf("3. Listar Componentes (Inventario)\n");
+        printf("4. Organizar Mochila (Ordenar Componentes)\n");
+        printf("5. Busca Binaria por Componente-Chave (por nome)\n");
+        printf("0. ATIVAR TORRE DE FUGA (Sair)\n");
+        printf("--------------------------------------------------------------\n");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
         
         // 1. Adicionar um item
         // A estrutura switch trata cada opção chamando a função correspondente.
         switch(opcao) {
             case 1:
-            printf("\n=== LOOTEAR ITEM ===\n");
-
-            if (total_itens < 10) {
-                printf("Nome do item(ex.:Kit Medico, AK47, Colete...): ");
-                scanf(" %[^\n]", inventario[total_itens].nome);
-
-                printf("Tipo do item:(ex.: arma, municao, cura): ");
-                scanf(" %[^\n]", inventario[total_itens].tipo);
-
-                printf("Quantidade: ");
-                scanf("%d", &inventario[total_itens].quantidade);
-
-                total_itens++;
-
-                printf("Item guardado com sucesso!\n");
-            } else {
-                printf("A mochila está cheia! Você precisa dropar algo.\n");
-            }
-            break;
+                printf("\n--- Coletando Novo Componente ---\n");
+                
+                if (total_itens < 10) {
+                    printf("Nome: ");
+                    scanf(" %[^\n]", inventario[total_itens].nome);
+                    
+                    printf("Tipo (Estrutural, Eletronico, Energia): ");
+                    scanf(" %[^\n]", inventario[total_itens].tipo);
+                    
+                    printf("Quantidade: ");
+                    scanf("%d", &inventario[total_itens].quantidade);
+                    
+                    // A nova variavel da struct
+                    printf("Prioridade de Montagem (1-5): ");
+                    scanf("%d", &inventario[total_itens].prioridade);
+                    
+                    printf("\nComponente '%s' adicionado!\n", inventario[total_itens].nome);
+                    
+                    total_itens++;
+                    ordenado_por_nome = 0;
+                    
+                } else {
+                    printf("A mochila esta cheia! Descarte algum componente primeiro.\n");
+                }
+                break;
 
         // 2. Remover um item
         case 2: 
@@ -91,62 +108,164 @@ int main() {
 
         // 3. Listar todos os itens
         // Exibe uma tabela formatada com todos os componentes presentes na mochila.
-        case 3: 
-            printf("\n=== IVENTARIO ===\n");
-
-            if(total_itens == 0) {
-                printf("A mochila está vazia!");
+        case 3:
+            printf("\n--- INVENTARIO ATUAL (%d/10) ---\n", total_itens);
+            
+            if (total_itens == 0) {
+                printf("Mochila vazia.\n");
             } else {
-                printf("%-5s | %-20s | %-15s | %s\n", "ID", "NOME", "TIPO", "QUANTIDADE");
-                printf("=============================================================\n");
+                printf("--------------------------------------------------------------\n");
+                // %-20s = 20 espaços alinhados à esquerda
+                printf("%-20s | %-15s | %-10s | %s\n", "NOME", "TIPO", "QUANTIDADE", "PRIORIDADE");
+                printf("--------------------------------------------------------------\n");
+                
                 for (int i = 0; i < total_itens; i++) {
-                    printf("[%d]  | %-20s | %-15s | %d\n", 
-                        i,
-                        inventario[i].nome,
-                        inventario[i].tipo,
-                        inventario[i].quantidade);
-
+                    printf("%-20s | %-15s | %-10d | %d\n", 
+                            inventario[i].nome, 
+                            inventario[i].tipo, 
+                            inventario[i].quantidade,
+                            inventario[i].prioridade);
                 }
-                printf("=============================================================\n");
-                printf("Total de itens: %d/10\n", total_itens);
+                printf("--------------------------------------------------------------\n");
             }
             break;
 
          // 4. Ordenar os itens por critério (nome, tipo, prioridade)
-        case 4:
-            printf("\n=== BUSCAR ITEM ===\n");
-            if (total_itens == 0) {
-                printf("A mochila está vazia! Nâo há itens disponíveis.\n");
-            } else {
-                char nome_busca[30];
-                printf("Digite o nome do item que procura: ");
-                scanf(" %[^\n]", nome_busca);
-
-                int encontrado = 0;
-
-                for (int i = 0; i < total_itens; i++) {
-                    if (strcmp(inventario[i].nome, nome_busca) == 0) {
-                        printf("\n -> ITEM ENCONTRADO:\n");
-
-                        printf("%-5s | %-20s | %-15s | %s\n", "ID", "NOME", "TIPO", "QUANTIDADE");
-                        printf("==================================================================\n");
-                        printf("[%d]  | %-20s | %-15s | %d\n", 
-                        i,
-                        inventario[i].nome,
-                        inventario[i].tipo,
-                        inventario[i].quantidade);
-
-                    encontrado = 1;
-                    break; 
-
+        case 4: {
+                printf("\n--- Organizar Mochila ---\n");
+                
+                if (total_itens < 2) {
+                    printf("Voce precisa de pelo menos 2 componentes para ordenar.\n");
+                } else {
+                    int sub_opcao;
+                    printf("1. Bubble Sort (Ordenar por Nome)\n");
+                    printf("2. Insertion Sort (Ordenar por Tipo)\n");
+                    printf("3. Selection Sort (Ordenar por Prioridade)\n");
+                    printf("Escolha a estrategia de ordenacao: ");
+                    scanf("%d", &sub_opcao);
+                    
+                    // Inicia o relogio e o contador de comparacoes
+                    clock_t inicio = clock();
+                    int comparacoes = 0;
+                    
+                    switch(sub_opcao) {
+                        case 1: // Bubble Sort (Por Nome)
+                            for (int i = 0; i < total_itens - 1; i++) {
+                                for (int j = 0; j < total_itens - i - 1; j++) {
+                                    comparacoes++;
+                                    if (strcmp(inventario[j].nome, inventario[j+1].nome) > 0) {
+                                        struct Item temp = inventario[j];
+                                        inventario[j] = inventario[j+1];
+                                        inventario[j+1] = temp;
+                                    }
+                                }
+                            }
+                            ordenado_por_nome = 1; // Habilita a Busca Binaria!
+                            printf("\n-> Ordenacao por Nome concluida!\n");
+                            break;
+                            
+                        case 2: // Insertion Sort (Por Tipo)
+                            for (int i = 1; i < total_itens; i++) {
+                                struct Item carta_atual = inventario[i];
+                                int j = i - 1;
+                                
+                                comparacoes++;
+                                while (j >= 0 && strcmp(inventario[j].tipo, carta_atual.tipo) > 0) {
+                                    inventario[j + 1] = inventario[j];
+                                    j = j - 1;
+                                    comparacoes++; 
+                                }
+                                inventario[j + 1] = carta_atual;
+                            }
+                            ordenado_por_nome = 0; // Quebrou a ordem por nome
+                            printf("\n-> Ordenacao por Tipo concluida!\n");
+                            break;
+                            
+                        case 3: // Selection Sort (Por Prioridade)
+                            for (int i = 0; i < total_itens - 1; i++) {
+                                int indice_menor = i;
+                                for (int j = i + 1; j < total_itens; j++) {
+                                    comparacoes++;
+                                    if (inventario[j].prioridade > inventario[indice_menor].prioridade) {
+                                        indice_menor = j;
+                                    }
+                                }
+                                if (indice_menor != i) {
+                                    struct Item temp = inventario[i];
+                                    inventario[i] = inventario[indice_menor];
+                                    inventario[indice_menor] = temp;
+                                }
+                            }
+                            ordenado_por_nome = 0; // Quebrou a ordem por nome
+                            printf("\n-> Ordenacao por Prioridade concluida!\n");
+                            break;
+                            
+                        default:
+                            printf("\nEstrategia invalida! Operacao cancelada.\n");
+                            break;
+                    }
+                    
+                    // Se o usuario escolheu uma opcao valida de 1 a 3, imprime o desempenho
+                    if (sub_opcao >= 1 && sub_opcao <= 3) {
+                        clock_t fim = clock();
+                        double tempo_gasto = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000.0;
+                        printf("Comparacoes realizadas: %d\n", comparacoes);
+                        printf("Tempo de execucao: %f ms\n", tempo_gasto);
                     }
                 }
+                break;
+            }
 
-                if (encontrado == 0 ) {
-                    printf("\n-> Erro: O item '%s' não está na mochila.\n", nome_busca);
+        case 5:
+            if (ordenado_por_nome == 0) {
+                printf("Erro: Ordene por NOME Primeiro!\n");
+            }
+
+            char chave[20];
+            printf("Digite o nome do componente para ativar a torre: ");
+            scanf(" %[^\n]", chave);
+
+            int inicio_busca = 0;
+            int fim_busca = total_itens - 1;
+            int meio;
+            int encontrou = 0;
+            int comp_busca = 0;
+
+            clock_t inicio_tempo_busca = clock();
+
+            while (inicio_busca <= fim_busca) {
+                comp_busca++;
+                meio = inicio_busca + (fim_busca - inicio_busca) / 2;
+                
+                int resultado_strcmp = strcmp(inventario[meio].nome, chave);
+                
+                if (resultado_strcmp == 0) {
+                    encontrou = 1;
+                    break; // Achou exatamente no meio!
+                } 
+                else if (resultado_strcmp < 0) {
+                    // A chave esta na metade da direita
+                    inicio_busca = meio + 1;
+                } 
+                else {
+                    // A chave esta na metade da esquerda
+                    fim_busca = meio - 1;
                 }
             }
-            break;
+
+            clock_t fim_tempo_busca = clock();
+            double tempo_busca_ms = ((double)(fim_tempo_busca - inicio_tempo_busca) / CLOCKS_PER_SEC) * 1000.0;
+
+            if (encontrou) {
+                printf("\nCOMPONENTE CHAVE LOCALIZADO NO INDICE [%d]!\n", meio);
+                printf("Torre de Fuga Pronta para Ativacao!\n");
+            } else {
+                printf("\nComponente nao encontrado na ilha.\n");
+            }
+            printf("Comparacoes feitas na busca: %d\n", comp_busca);
+            printf("Tempo de busca: %f ms\n", tempo_busca_ms);
+
+
 
         case 0: 
             printf("\nFechando mochila...\n");
